@@ -39,7 +39,7 @@ def proxy_fixing(original_dataset: pd.DataFrame, protected_attributes: list) -> 
     Returns:
         pd.DataFrame: returns the dataframe in which the proxies do not lead to fairness
     """
-    proxy_variables = return_proxy_variables(original_dataset, 0.8)
+    proxy_variables = return_proxy_variables(original_dataset)
     dataset = original_dataset
     proxy_variables_for_sensitive_attributes = _return_proxy_protected_attribute(proxy_variables,
                                                                                  protected_attributes)

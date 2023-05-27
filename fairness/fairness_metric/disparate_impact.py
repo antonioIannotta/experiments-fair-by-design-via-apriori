@@ -30,7 +30,6 @@ class DisparateImpact:
         :return: return 'fair' if the dataset is fair, unfair 'otherwise'
         """
         bias_analysis_dataframe = self.bias_detection(dataset, protected_attributes, output_column)
-        print(bias_analysis_dataframe)
         return_value = 'unfair'
         for value in bias_analysis_dataframe['Disparate Impact'].values:
             if value <= 0.80 or value >= 1.25:
@@ -56,10 +55,10 @@ class DisparateImpact:
         for attribute in protected_attributes:
             unprivileged_probability = self.compute_disparate_impact(dataset, attribute, 0,
                                                                      output_column, 1)
-            print("UP ---> ", unprivileged_probability)
+            
             privileged_probability = self.compute_disparate_impact(dataset, attribute, 1,
                                                                    output_column, 1)
-            print("PP ---> ", privileged_probability)
+            
             disparate_impact = unprivileged_probability / privileged_probability
             disparate_impact_array.append(disparate_impact)
 
@@ -81,7 +80,5 @@ class DisparateImpact:
         :return:
         """
         attribute_columns_data = dataset[dataset[protected_attribute] == protected_attribute_value]
-        print( "1  -->  ", len(attribute_columns_data))
-        print("2 ---> ", len(attribute_columns_data[output_column] == output_value))
         return len(attribute_columns_data[attribute_columns_data[output_column] == output_value]) / len(
             attribute_columns_data)

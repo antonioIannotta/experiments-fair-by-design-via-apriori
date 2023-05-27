@@ -37,39 +37,6 @@ class DisparateImpact:
 
         return return_value
 
-    # This method returns the sensitive attributes into the dataframe.
-    # (Only in this previous have been considered sensitive attributes the ones with only 2 possible values)
-    #def return_sensitive_attributes(self, dataset: pd.DataFrame):
-    #    sensitive_attributes = []
-    #    for attr in dataset.columns[:len(dataset.columns) - 1]:
-    #        unique_values = self.return_unique_values_for_attribute(attr, dataset)
-    #        if len(unique_values) == 2:
-    #            sensitive_attributes.append(attr)
-    #        else:
-    #            continue
-    #
-    #    return sensitive_attributes
-
-    # This method return the value that each attribute can have.
-    #def return_unique_values_for_attribute(self, attribute, dataset: pd.DataFrame):
-    #    unique_values = []
-    #    for value in dataset[attribute][1:].values:
-    #        if value not in unique_values:
-    #            unique_values.append(value)
-    #        else:
-    #            continue
-    #
-    #    return unique_values
-
-    # This method takes the sensitive attributes and returns a dataset in which the values of each sensitive attribute is
-    # either 1 or 0
-    #def columns_normalization_max_min(self, dataset: pd.DataFrame, sensitive_attributes) -> pd.DataFrame:
-    #    for attribute in sensitive_attributes:
-    #        unique_values = self.return_unique_values_for_attribute(attribute, dataset)
-    #        dataset[attribute].replace({max(unique_values): 1, min(unique_values): 0}, inplace=True)
-    #
-    #    return dataset
-
     def return_disparate_impact(self, dataset: pd.DataFrame, protected_attributes: list) -> pd.DataFrame:
         """
         This method returns a dataframe in which, for each protected attribute is related the correspondent

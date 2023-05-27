@@ -1,4 +1,5 @@
 import pandas as pd
+from sklearn.preprocessing import LabelEncoder
 
 
 def fix_protected_attributes(dataset: pd.DataFrame, protected_attributes: list) -> pd.DataFrame:
@@ -28,3 +29,16 @@ def remove_columns_from_dataset(dataset: pd.DataFrame, columns_to_drop: list) ->
     """
     new_dataframe = dataset.drop(columns=[column for column in columns_to_drop])
     return new_dataframe
+
+def categorical_to_numeric_converter(dataset: pd.DataFrame) -> pd.DataFrame:
+    """
+    The method converts each categorical column into a numerical one
+    :param dataset: the dataset on which pervorm the convertion
+    :return: returns a dataset with all numerical attributes
+    """
+    categorical_columns = [column for column in dataset.columns if dataset[column].dtype=="O"]
+    label_encoder = LabelEncoder()
+    for column in categorical_columns:
+        dataset[column] = label_encoder.fit_transform(dataset[column])
+
+    return dataset

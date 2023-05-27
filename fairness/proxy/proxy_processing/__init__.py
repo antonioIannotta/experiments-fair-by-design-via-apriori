@@ -1,5 +1,5 @@
 import pandas as pd
-from proxy_detection import return_proxy_variables
+from fairness.proxy.proxy_detection import return_proxy_variables
 
 
 def _return_proxy_protected_attribute(proxy_variables: pd.DataFrame,

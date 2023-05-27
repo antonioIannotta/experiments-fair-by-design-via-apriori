@@ -10,12 +10,12 @@ def fix_protected_attributes(dataset: pd.DataFrame, protected_attributes: list) 
     :return: returns the dataset with the protected attributes fixed
     """
     for protected_attribute in protected_attributes:
-        mean_protected_attribute = dataset[protected_attribute].mean()
-        for index, row in dataset.iterrows():
-            if row[protected_attribute] > mean_protected_attribute:
-                row[protected_attribute] = 1
-            else:
-                row[protected_attribute] = 0
+        if len(dataset[protected_attribute].values) == 2:
+            dataset[dataset[protected_attribute] == dataset[protected_attribute].max()] = 1
+            dataset[dataset[protected_attribute] == dataset[protected_attribute].min()] = 0
+        else:
+            dataset[dataset[protected_attribute] > dataset[protected_attribute].mean()] = 1
+            dataset[dataset[protected_attribute] <= dataset[protected_attribute].mean()] = 0
 
     return dataset
 

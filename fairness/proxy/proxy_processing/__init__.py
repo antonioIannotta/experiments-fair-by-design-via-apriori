@@ -16,7 +16,7 @@ def _return_proxy_protected_attribute(proxy_variables: pd.DataFrame,
     sensitive_antecedent = []
     sensitive_consequent = []
     for index, proxy_row in proxy_variables.iterrows():
-        for consequent in proxy_row['Consequent']:
+        for consequent in proxy_row['Consequent'].values:
             for sensitive_attribute in protected_attributes:
                 if str(consequent).startswith(sensitive_attribute):
                     sensitive_antecedent.append(proxy_row['Antecedent'])
@@ -45,7 +45,7 @@ def proxy_fixing(original_dataset: pd.DataFrame, protected_attributes: list) -> 
                                                                                  protected_attributes)
 
     for index, row in proxy_variables_for_sensitive_attributes.iterrows():
-        for antecedent in row['Antecedent']:
+        for antecedent in row['Antecedent'].values:
             consequent = row['Consequent']
 
             disparate_impact_value = _compute_disparate_impact_for_proxy(antecedent, consequent,

@@ -63,7 +63,6 @@ def _return_apriori_dataset_format(dataset: pd.DataFrame) -> list:
     """
     records = []
     for i in range(len(dataset)):
-        print(i)
         records.append(
             [str(dataset.columns[j] + " = " + str(dataset.values[i, j])) for j in range(len(dataset.columns) - 1)])
 

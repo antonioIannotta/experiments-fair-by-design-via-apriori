@@ -51,8 +51,12 @@ def _return_apriori_dataframe(association_results: list) -> pd.DataFrame:
     consequent_series = pd.Series(consequent)
     confidence_series = pd.Series(confidence)
 
-    return pd.DataFrame(
+    dataframe = pd.DataFrame(
         {'Antecedent': antecedent_series, 'Consequent': consequent_series, 'Confidence': confidence_series})
+    
+    print(dataframe)
+
+    return dataframe
 
 
 def _return_apriori_dataset_format(dataset: pd.DataFrame) -> list:

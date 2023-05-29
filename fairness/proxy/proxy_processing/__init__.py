@@ -40,10 +40,10 @@ def proxy_fixing(original_dataset: pd.DataFrame, protected_attributes: list) -> 
         pd.DataFrame: returns the dataframe in which the proxies do not lead to fairness
     """
     proxy_variables = return_proxy_variables(original_dataset)
-    dataset = original_dataset
     proxy_variables_for_sensitive_attributes = _return_proxy_protected_attribute(proxy_variables,
                                                                                  protected_attributes)
-
+    
+    dataset = original_dataset
     for index, row in proxy_variables_for_sensitive_attributes.iterrows():
         for antecedent in row['Antecedent']:
             consequent = row['Consequent']

@@ -50,7 +50,7 @@ def proxy_fixing(original_dataset: pd.DataFrame, protected_attributes: list) -> 
 
             disparate_impact_value = _compute_disparate_impact_for_proxy(antecedent, consequent,
                                                                          original_dataset)
-            if not 0.8 < disparate_impact_value < 1.25:
+            if not 0.8 < disparate_impact_value < 1.25 and _proxy_format_to_column(antecedent) not in protected_attributes:
                 dataset = _remove_proxy_from_dataset(original_dataset, antecedent)
 
             else:
@@ -123,7 +123,7 @@ def _remove_proxy_from_dataset(original_dataset: pd.DataFrame, antecedent: str) 
     return dataset
 
 
-def _proxy_format_to_column(row: pd.Series) -> list:
+def _proxy_format_to_column(antecedent: str) -> str:
     """This function converts the information related to the proxy into the column name
 
     Args:
@@ -133,8 +133,6 @@ def _proxy_format_to_column(row: pd.Series) -> list:
     Returns:
         list: _description_
     """
-    result = []
-    for element in row:
-        result.append(element.split(' = ')[0])
+    
 
-    return result
+    return antecedent.split(" = ")[0]

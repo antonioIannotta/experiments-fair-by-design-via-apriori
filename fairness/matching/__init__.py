@@ -14,7 +14,7 @@ def compute(dataset: pd.DataFrame, protected_attributes: list, output_column: st
         cnt += 1
         print(cnt)
         proxy_fixed_dataset = proxy_fixing(dataset, protected_attributes)
-        if dataset.columns == proxy_fixed_dataset.columns:
+        if len(dataset.columns) == len(proxy_fixed_dataset.columns):
             dataset = remove_columns_from_dataset(dataset, protected_attributes)
             break
         else:

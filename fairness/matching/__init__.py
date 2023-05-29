@@ -9,20 +9,15 @@ def compute(dataset: pd.DataFrame, protected_attributes: list, output_column: st
     removes the protected attributes.
     """
     cnt = 0
-    fixed_dataset = fix_protected_attributes(dataset, protected_attributes)
-    fairness_evaluation = DisparateImpact().fairness_evaluation(fixed_dataset, protected_attributes, output_column)
-    while fairness_evaluation == 'unfair':
+    dataset = fix_protected_attributes(dataset, protected_attributes)
+    while DisparateImpact().fairness_evaluation(dataset, protected_attributes, output_column) == 'unfair':
         cnt += 1
         print(cnt)
-        proxy_fixed_dataset = proxy_fixing(fixed_dataset, protected_attributes)
-        if len(fixed_dataset.columns) == len(proxy_fixed_dataset.columns):
-            proxy_fixed_dataset = remove_columns_from_dataset(proxy_fixed_dataset, protected_attributes)
-            fairness_evaluation = 'fair'
+        proxy_fixed_dataset = proxy_fixing(dataset, protected_attributes)
+        if len(dataset.columns) == len(proxy_fixed_dataset.columns):
+            dataset = remove_columns_from_dataset(dataset, protected_attributes)
+            break
         else:
-            protected_attributes = []
-            for attr in protected_attributes:
-                if attr in dataset.columns:
-                    protected_attributes.append(attr)
-            fairness_evaluation = DisparateImpact().fairness_evaluation(proxy_fixed_dataset, protected_attributes, output_column)
+            dataset = proxy_fixed_dataset
 
-    return proxy_fixed_dataset
+    return dataset

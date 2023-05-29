@@ -70,7 +70,6 @@ def _compute_disparate_impact_for_proxy(antecedent, consequent,
     :return: returns the disparate impact value between the proxy and teh protected attribute computed on the dataset
     """
     proxy = antecedent.split(' = ')[0]
-    print(type(proxy))
     proxy_value = int(antecedent.split(' = ')[1])
     protected_column = consequent.split(' = ')[0]
     protected_value = int(consequent.split(' = ')[1])

@@ -65,7 +65,6 @@ class DisparateImpact:
         disparate_impact_series = pd.Series(np.array(disparate_impact_array))
         disparate_impact_dataframe = pd.DataFrame(
             {"Attribute": attribute_series, "Disparate Impact": disparate_impact_series})
-        print(disparate_impact_dataframe)
         return disparate_impact_dataframe
 
     # This method compute the disparate impact for a specific attribute

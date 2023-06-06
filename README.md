@@ -1,3 +1,3 @@
 # fair-by-design
 
-## As it's possible to notice from the two notebook, the fairness through unawareness does not affect the predictor accuracy
+## The education dataset on which have been performed the test in both fair and not fair scenario is the following: [!alt]https://archive.ics.uci.edu/ml/datasets/Higher+Education+Students+Performance+Evaluation+Dataset#()

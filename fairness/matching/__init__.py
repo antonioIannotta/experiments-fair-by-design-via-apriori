@@ -13,6 +13,7 @@ def compute(dataset: pd.DataFrame, protected_attributes: list, output_column: st
     final_dataset = remove_columns_from_dataset(numerical_dataset, columns_to_drop)
     fixed_dataset = fix_protected_attributes(final_dataset, protected_attributes)
     fairness_evaluation = DisparateImpact().fairness_evaluation(fixed_dataset, protected_attributes, output_column)
+    print(fairness_evaluation)
     while fairness_evaluation == 'unfair':
         proxy_fixed_dataset = proxy_fixing(fixed_dataset, protected_attributes)
         if len(fixed_dataset.columns) == len(proxy_fixed_dataset.columns):

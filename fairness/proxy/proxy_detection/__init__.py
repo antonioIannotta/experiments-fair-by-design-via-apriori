@@ -12,11 +12,9 @@ def return_proxy_variables(dataset: pd.DataFrame, confidence_threshold: float = 
     Returns: pd.DataFrame: returns the dataframe of the proxy variable. The dataframe is in the form (Antecedent,
     Consequent, Confidence)
     """
-    print("Hello")
     records = _return_apriori_dataset_format(dataset)
     association_rules = apriori(records, min_confidence=confidence_threshold)
     association_results = list(association_rules)
-    print("Finished")
     return _return_apriori_dataframe(association_results)
 
 
@@ -48,8 +46,6 @@ def _return_apriori_dataframe(association_results: list) -> pd.DataFrame:
 
     dataframe = pd.DataFrame(
         {'Antecedent': antecedent_series, 'Consequent': consequent_series, 'Confidence': confidence_series})
-    
-    print(dataframe)
 
     return dataframe
 

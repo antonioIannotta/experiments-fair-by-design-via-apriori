@@ -34,6 +34,7 @@ class DisparateImpact:
         for value in bias_analysis_dataframe['Disparate Impact'].values:
             if value <= 0.80 or value >= 1.25:
                 return_value = 'unfair'
+                break
             else:
                 return_value = 'fair'
 

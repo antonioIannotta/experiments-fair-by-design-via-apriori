@@ -3,7 +3,7 @@ from fairness.pre_processing import *
 from fairness.proxy.proxy_processing import proxy_fixing
 
 
-def conscious_fairness_through_unawareness(dataset: pd.DataFrame, protected_attributes: list, output_column: str, columns_to_drop: list, confidence_threshold: float = 0.8) -> pd.DataFrame:
+def conscious_fairness_through_unawareness(dataset: pd.DataFrame, protected_attributes: list, output_column: str, columns_to_drop: list = [], confidence_threshold: float = 0.8) -> pd.DataFrame:
     """
     This method compute the transformation of the dataset. It looks for proxy and, in case these ones are not founded it
     removes the protected attributes.

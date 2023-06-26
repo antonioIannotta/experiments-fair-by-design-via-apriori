@@ -4,7 +4,7 @@ import numpy as np
 
 class DisparateImpact:
 
-    def bias_detection(self, dataset: pd.DataFrame, protected_attributes: list, output_column: pd.Series) -> pd.DataFrame:
+    def bias_detection(self, dataset: pd.DataFrame, protected_attributes: list, output_column_values: list, output_column: str) -> pd.DataFrame:
         """
         This method check the disparate impact for each sensitive attributes in the dataset and returns a dataframe in
         which a column is the series of attributes and a column is the disparate impact value for each attribute
@@ -18,10 +18,11 @@ class DisparateImpact:
             pd.Dataframe
 
         """
-        return self.return_disparate_impact(dataset, protected_attributes, output_column)
+        return self.return_disparate_impact(dataset, protected_attributes, output_column_values, output_column)
 
     # This method evaluates the fairness starting from the result of the check method.
-    def fairness_evaluation(self, dataset: pd.DataFrame, protected_attributes: list, output_column: pd.Series) -> str:
+    def fairness_evaluation(self, dataset: pd.DataFrame, protected_attributes: list, output_column_values: list,
+                            output_column: str) -> str:
         """
         This method perform an evaluation of the fairness of a given dataset according to the Disparate Impact metric
         :param dataset: this is the dataset on which to be labelled as fair or unfair
@@ -29,7 +30,7 @@ class DisparateImpact:
         :param output_column: the column of the dataset that represents the output
         :return: return 'fair' if the dataset is fair, unfair 'otherwise'
         """
-        bias_analysis_dataframe = self.bias_detection(dataset, protected_attributes, output_column)
+        bias_analysis_dataframe = self.bias_detection(dataset, protected_attributes, output_column_values, output_column)
         return_value = 'unfair'
         for value in bias_analysis_dataframe['Disparate Impact'].values:
             if value <= 0.80 or value >= 1.25:
@@ -41,7 +42,7 @@ class DisparateImpact:
         return return_value
 
     def return_disparate_impact(self, dataset: pd.DataFrame, protected_attributes: list, 
-                                output_column: str) -> pd.DataFrame:
+                                output_column_values: list, output_column: str) -> pd.DataFrame:
         """
         This method returns a dataframe in which, for each protected attribute is related the correspondent
         Disparate Impact value
@@ -53,19 +54,25 @@ class DisparateImpact:
         """
         attribute_series = pd.Series(protected_attributes)
         disparate_impact_array = []
-        for attribute in protected_attributes:
-            unprivileged_probability = self.compute_disparate_impact(dataset, attribute, 0,
-                                                                     output_column, 1)
+        for output_value in output_column_values:
+            for attribute in protected_attributes:
+                unprivileged_probability = self.compute_disparate_impact(dataset, attribute, 0,
+                                                                     output_column, output_value)
             
-            privileged_probability = self.compute_disparate_impact(dataset, attribute, 1,
-                                                                   output_column, 1)
+                privileged_probability = self.compute_disparate_impact(dataset, attribute, 1,
+                                                                   output_column, output_value)
             
-            disparate_impact = unprivileged_probability / privileged_probability
-            disparate_impact_array.append(disparate_impact)
+                disparate_impact = 1.0
 
-        disparate_impact_series = pd.Series(np.array(disparate_impact_array))
-        disparate_impact_dataframe = pd.DataFrame(
-            {"Attribute": attribute_series, "Disparate Impact": disparate_impact_series})
+                if privileged_probability == 0:
+                    disparate_impact_array.append(disparate_impact)
+                else:
+                    disparate_impact = unprivileged_probability / privileged_probability
+                    disparate_impact_array.append(disparate_impact)
+
+            disparate_impact_series = pd.Series(np.array(disparate_impact_array))
+            disparate_impact_dataframe = pd.DataFrame(
+                {"Attribute": attribute_series, "Disparate Impact": disparate_impact_series})
         return disparate_impact_dataframe
 
     # This method compute the disparate impact for a specific attribute

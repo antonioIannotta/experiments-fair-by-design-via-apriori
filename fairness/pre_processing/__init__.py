@@ -53,3 +53,4 @@ def categorical_to_numeric_converter(dataset: pd.DataFrame) -> pd.DataFrame:
         dataset[column] = label_encoder.fit_transform(dataset[column])
 
     return dataset
+

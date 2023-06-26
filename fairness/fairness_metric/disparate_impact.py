@@ -61,11 +61,9 @@ class DisparateImpact:
             
                 privileged_probability = self.compute_disparate_impact(dataset, attribute, 1,
                                                                    output_column, output_value)
-            
-                disparate_impact = 1.0
 
                 if privileged_probability == 0:
-                    disparate_impact_array.append(disparate_impact)
+                    continue
                 else:
                     disparate_impact = unprivileged_probability / privileged_probability
                     disparate_impact_array.append(disparate_impact)

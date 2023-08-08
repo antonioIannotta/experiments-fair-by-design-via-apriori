@@ -4,7 +4,8 @@ import numpy as np
 
 class DisparateImpact:
 
-    def bias_detection(self, dataset: pd.DataFrame, protected_attributes: list, output_column_values: list, output_column: str) -> pd.DataFrame:
+    def bias_detection(self, dataset: pd.DataFrame, protected_attributes: list, output_column_values: list,
+                       output_column: str) -> pd.DataFrame:
         """
         This method check the disparate impact for each sensitive attributes in the dataset and returns a dataframe in
         which a column is the series of attributes and a column is the disparate impact value for each attribute
@@ -30,7 +31,8 @@ class DisparateImpact:
         :param output_column: the column of the dataset that represents the output
         :return: return 'fair' if the dataset is fair, unfair 'otherwise'
         """
-        bias_analysis_dataframe = self.bias_detection(dataset, protected_attributes, output_column_values, output_column)
+        bias_analysis_dataframe = self.bias_detection(dataset, protected_attributes, output_column_values,
+                                                      output_column)
         return_value = 'unfair'
         for value in bias_analysis_dataframe['Disparate Impact'].values:
             if value <= 0.80 or value >= 1.25:
@@ -41,7 +43,7 @@ class DisparateImpact:
 
         return return_value
 
-    def return_disparate_impact(self, dataset: pd.DataFrame, protected_attributes: list, 
+    def return_disparate_impact(self, dataset: pd.DataFrame, protected_attributes: list,
                                 output_column_values: list, output_column: str) -> pd.DataFrame:
         """
         This method returns a dataframe in which, for each protected attribute is related the correspondent
@@ -56,11 +58,11 @@ class DisparateImpact:
         disparate_impact_array = []
         for output_value in output_column_values:
             for attribute in protected_attributes:
-                unprivileged_probability = self.compute_disparate_impact(dataset, attribute, 0,
-                                                                     output_column, output_value)
-            
-                privileged_probability = self.compute_disparate_impact(dataset, attribute, 1,
-                                                                   output_column, output_value)
+                unprivileged_probability = self.compute_probability(dataset, attribute, 0,
+                                                                         output_column, output_value)
+
+                privileged_probability = self.compute_probability(dataset, attribute, 1,
+                                                                       output_column, output_value)
 
                 if privileged_probability == 0:
                     continue
@@ -74,7 +76,7 @@ class DisparateImpact:
         return disparate_impact_dataframe
 
     # This method compute the disparate impact for a specific attribute
-    def compute_disparate_impact(self, dataset: pd.DataFrame, protected_attribute, protected_attribute_value,
+    def compute_probability(self, dataset: pd.DataFrame, protected_attribute, protected_attribute_value,
                                  output_column, output_value) -> float:
         """
         This method computes the disparate impact value starting from the parameters

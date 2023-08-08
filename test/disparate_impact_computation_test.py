@@ -3,7 +3,7 @@ import pandas as pd
 from fairness.fairness_metric.disparate_impact import DisparateImpact
 
 
-class ComputeDisparateImpactTest(unittest.TestCase):
+class ComputeDisparateImpactComputationTest(unittest.TestCase):
 
     def test_compute_disparate_impact_1(self):
         disparate_impact = DisparateImpact()

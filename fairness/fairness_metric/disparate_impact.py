@@ -68,11 +68,8 @@ class DisparateImpact:
                 privileged_probability = self.compute_probability(dataset, attribute, 1,
                                                                   output_column, output_value)
 
-                if privileged_probability == 0:
-                    continue
-                else:
-                    disparate_impact = unprivileged_probability / privileged_probability
-                    disparate_impact_array.append(disparate_impact)
+                disparate_impact = unprivileged_probability / privileged_probability
+                disparate_impact_array.append(disparate_impact)
 
             attribute_series = pd.Series(attribute_array)
             disparate_impact_series = pd.Series(np.array(disparate_impact_array))

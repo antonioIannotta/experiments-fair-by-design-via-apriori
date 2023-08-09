@@ -12,21 +12,20 @@ def fix_protected_attributes(dataset: pd.DataFrame, protected_attributes: list) 
     for protected_attribute in protected_attributes:
         protected_attribute_value = []
         if len(dataset[protected_attribute].values) == 2:
-            max = dataset[protected_attribute].max()
-            min = dataset[protected_attribute].min()
+            max_value = dataset[protected_attribute].max()
             for index, row in dataset.iterrows():
-                if row[protected_attribute] == max:
+                if row[protected_attribute] == max_value:
                     protected_attribute_value.append(1)
                 else:
                     protected_attribute_value.append(0)
         else:
-            mean = dataset[protected_attribute].mean()
+            threshold_value = (dataset[protected_attribute].min() + dataset[protected_attribute].max()) / 2
             for index, row in dataset.iterrows():
-                if row[protected_attribute] > mean:
+                if row[protected_attribute] > threshold_value:
                     protected_attribute_value.append(1)
                 else:
                     protected_attribute_value.append(0)
-        
+
         dataset[protected_attribute] = pd.Series(protected_attribute_value)
     return dataset
 
@@ -41,16 +40,16 @@ def remove_columns_from_dataset(dataset: pd.DataFrame, columns_to_drop: list) ->
     new_dataframe = dataset.drop(columns=[column for column in columns_to_drop])
     return new_dataframe
 
+
 def categorical_to_numeric_converter(dataset: pd.DataFrame) -> pd.DataFrame:
     """
     The method converts each categorical column into a numerical one
     :param dataset: the dataset on which pervorm the convertion
     :return: returns a dataset with all numerical attributes
     """
-    categorical_columns = [column for column in dataset.columns if dataset[column].dtype=="O"]
+    categorical_columns = [column for column in dataset.columns if dataset[column].dtype == "O"]
     label_encoder = LabelEncoder()
     for column in categorical_columns:
         dataset[column] = label_encoder.fit_transform(dataset[column])
 
     return dataset
-

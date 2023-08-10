@@ -2,98 +2,118 @@ import pandas as pd
 import numpy as np
 
 
-class DisparateImpact:
+def fairness_evaluation(dataset: pd.DataFrame, protected_attributes: list, output_column_values: list,
+                        output_column: str) -> str:
+    """
 
-    def bias_detection(self, dataset: pd.DataFrame, protected_attributes: list, output_column_values: list,
-                       output_column: str) -> pd.DataFrame:
-        """
-        This method check the disparate impact for each sensitive attributes in the dataset and returns a dataframe in
-        which a column is the series of attributes and a column is the disparate impact value for each attribute
-        Args:
-            dataset: pd.DataFrame: it is the original dataset on which perform the bias detection
-            protected_attributes: list: it is the list of the protected attributes on which to compute the disparate
-            impact value
-            output_columng: pd.Series: it is the output column needed to compute the disparate impact value
+    Args:
+        dataset: the dataset on which perform the computation to establish the fairness/unfairness
+        protected_attributes: the list of protected attributes that are fundamental in order to compute the value needed
+        for the DI metric
+        output_column_values: the values of the output column that are needed in order to establish the
+        DI value for each possible output value
+        output_column: the output column
 
-        Returns:
-            pd.Dataframe
-
-        """
-        return self.return_disparate_impact(dataset, protected_attributes, output_column_values, output_column)
-
-    # This method evaluates the fairness starting from the result of the check method.
-    def fairness_evaluation(self, dataset: pd.DataFrame, protected_attributes: list, output_column_values: list,
-                            output_column: str) -> str:
-        """
-        This method perform an evaluation of the fairness of a given dataset according to the Disparate Impact metric
-        :param dataset: this is the dataset on which to be labelled as fair or unfair
-        :param protected_attributes: the list of the protected attributes on which compute the disparate impact value
-        :param output_column: the column of the dataset that represents the output
-        :param output_column_values
-        :return: return 'fair' if the dataset is fair, unfair 'otherwise'
-        """
-        bias_analysis_dataframe = self.bias_detection(dataset, protected_attributes, output_column_values,
+    Returns:
+    this method returns a string that it's a label for the dataset that can only be 'fair' or 'unfair'.
+    """
+    bias_analysis_dataframe = return_disparate_impact(dataset, protected_attributes, output_column_values,
                                                       output_column)
-        return_value = 'unfair'
-        for value in bias_analysis_dataframe['Disparate Impact'].values:
-            if value <= 0.80 or value >= 1.25:
-                return_value = 'unfair'
-                break
-            else:
-                return_value = 'fair'
+    return_value = 'unfair'
+    for value in bias_analysis_dataframe['Disparate Impact'].values:
+        if value <= 0.80 or value >= 1.25:
+            return_value = 'unfair'
+            break
+        else:
+            return_value = 'fair'
 
-        return return_value
-
-    def return_disparate_impact(self, dataset: pd.DataFrame, protected_attributes: list,
-                                output_column_values: list, output_column: str) -> pd.DataFrame:
-        """
-        This method returns a dataframe in which, for each protected attribute is related the correspondent
-        Disparate Impact value
-        :param dataset: the dataset on which the disparate impact value must be computed
-        :param protected_attributes: set of protected attributes for which the disparate impact value must be
-        computed
-        :param output_column: the output column needed to compute the disparate impact value
-        :param output_column_values
-        :return:
-        """
-        attribute_array = []
-        disparate_impact_array = []
-        disparate_impact_dataframe = pd.DataFrame()
-        for output_value in output_column_values:
-            for attribute in protected_attributes:
-                attribute_array.append(attribute)
-                unprivileged_probability = self.compute_probability(dataset, attribute, 0,
-                                                                    output_column, output_value)
-
-                privileged_probability = self.compute_probability(dataset, attribute, 1,
-                                                                  output_column, output_value)
-
-                disparate_impact = unprivileged_probability / privileged_probability
-                disparate_impact_array.append(disparate_impact)
-
-            attribute_series = pd.Series(attribute_array)
-            disparate_impact_series = pd.Series(np.array(disparate_impact_array))
-            disparate_impact_dataframe = pd.DataFrame(
-                {"Attribute": attribute_series, "Disparate Impact": disparate_impact_series})
-
-        return disparate_impact_dataframe
-
-    # This method compute the disparate impact for a specific attribute
-    def compute_probability(self, dataset: pd.DataFrame, protected_attribute, protected_attribute_value,
-                            output_column, output_value) -> float:
-        """
-        This method computes the disparate impact value starting from the parameters
-        :param dataset: the dataset needed to perform the computation
-        :param protected_attribute: the protected attribute on which compute the disparate impact
-        :param protected_attribute_value: the value of the protected attribute
-        :param output_column: the output of interest
-        :param output_value: the value of the output of interest
-        :return:
-        """
-        attribute_columns_data = dataset[dataset[protected_attribute] == protected_attribute_value]
-        return len(attribute_columns_data[attribute_columns_data[output_column] == output_value]) / len(
-            attribute_columns_data)
+    return return_value
 
 
+def return_privileged_unprivileged_protected_attribute_value(dataset: pd.DataFrame, attribute: str, param: str) -> int:
+    """
 
-###TODO ragionare sulla probabilità privilegiata e non
+    Args:
+        dataset: the dataset needed to perform the computation about the most and less frequent value for a
+        specific variable
+        attribute: the variable on which compute the frequency of its values
+        param: variable used to specify if there's interest for either privileged or unprivileged value
+
+    Returns:
+    returns the most frequent value if the interest is for the privileged group, otherwise it returns the less frequent value for the unprivileged group
+    """
+    unique_values = dataset[attribute].unique().tolist()
+    value_frequency = []
+    return_value = 0
+    print(unique_values)
+    if param == 'unprivileged':
+        for value in unique_values:
+            value_frequency.append(dataset[attribute].values.tolist().count(value))
+        index = value_frequency.index(min(value_frequency))
+        return unique_values[index]
+    else:
+        for value in unique_values:
+            value_frequency.append(dataset[attribute].values.tolist().count(value))
+        index = value_frequency.index(max(value_frequency))
+        return unique_values[index]
+
+
+def return_disparate_impact(dataset: pd.DataFrame, protected_attributes: list,
+                            output_column_values: list, output_column: str) -> pd.DataFrame:
+    """
+
+    Args:
+        dataset: the dataset on which compute the disparate impact value
+        protected_attributes: the list of protected attributes for the ones there's an interest about their DI value
+        output_column_values: the list of possible values for the output column
+        output_column: the output column
+
+    Returns:
+        this method returns the disparate impact value computed on the dataset for a specific attribute and a specific output column
+
+    """
+    attribute_array = []
+    disparate_impact_array = []
+    disparate_impact_dataframe = pd.DataFrame()
+    for output_value in output_column_values:
+        for attribute in protected_attributes:
+            attribute_array.append(attribute)
+            unprivileged_protected_attribute_value = (
+                return_privileged_unprivileged_protected_attribute_value(dataset, attribute, 'unprivileged'))
+            privileged_protected_attribute_value = (
+                return_privileged_unprivileged_protected_attribute_value(dataset, attribute, 'privileged'))
+
+            unprivileged_probability = compute_probability(dataset, attribute, unprivileged_protected_attribute_value,
+                                                           output_column, output_value)
+
+            privileged_probability = compute_probability(dataset, attribute, privileged_protected_attribute_value,
+                                                         output_column, output_value)
+
+            disparate_impact = unprivileged_probability / privileged_probability
+            disparate_impact_array.append(disparate_impact)
+
+        attribute_series = pd.Series(attribute_array)
+        disparate_impact_series = pd.Series(np.array(disparate_impact_array))
+        disparate_impact_dataframe = pd.DataFrame(
+            {"Attribute": attribute_series, "Disparate Impact": disparate_impact_series})
+
+    return disparate_impact_dataframe
+
+
+def compute_probability(dataset: pd.DataFrame, protected_attribute, protected_attribute_value,
+                        output_column, output_value) -> float:
+    """
+
+    Args:
+        dataset:
+        protected_attribute:
+        protected_attribute_value:
+        output_column:
+        output_value:
+
+    Returns:
+        this method computes the probability for a specific value in order to be further used to compute the DI value
+    """
+    attribute_columns_data = dataset[dataset[protected_attribute] == protected_attribute_value]
+    return len(attribute_columns_data[attribute_columns_data[output_column] == output_value]) / len(
+        attribute_columns_data)

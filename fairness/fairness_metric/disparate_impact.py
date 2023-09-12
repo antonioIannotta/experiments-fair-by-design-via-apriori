@@ -17,8 +17,9 @@ def fairness_evaluation(dataset: pd.DataFrame, protected_attributes: list, outpu
     Returns:
     this method returns a string that it's a label for the dataset that can only be 'fair' or 'unfair'.
     """
-    bias_analysis_dataframe = return_disparate_impact(dataset, protected_attributes, output_column_values,
-                                                      output_column)
+    bias_analysis_dataframe = return_disparate_impact_for_fairness_evaluation(dataset, protected_attributes,
+                                                                              output_column_values,
+                                                                              output_column)
     return_value = 'unfair'
     for value in bias_analysis_dataframe['Disparate Impact'].values:
         if value <= 0.80 or value >= 1.25:
@@ -39,12 +40,11 @@ def return_privileged_unprivileged_protected_attribute_value(dataset: pd.DataFra
         attribute: the variable on which compute the frequency of its values
         param: variable used to specify if there's interest for either privileged or unprivileged value
 
-    Returns:
-    returns the most frequent value if the interest is for the privileged group, otherwise it returns the less frequent value for the unprivileged group
+    Returns: returns the most frequent value if the interest is for the privileged group, otherwise it returns the
+    less frequent value for the unprivileged group
     """
     unique_values = dataset[attribute].unique().tolist()
     value_frequency = []
-    return_value = 0
     print(unique_values)
     if param == 'unprivileged':
         for value in unique_values:
@@ -58,8 +58,8 @@ def return_privileged_unprivileged_protected_attribute_value(dataset: pd.DataFra
         return unique_values[index]
 
 
-def return_disparate_impact(dataset: pd.DataFrame, protected_attributes: list,
-                            output_column_values: list, output_column: str) -> pd.DataFrame:
+def return_disparate_impact_for_fairness_evaluation(dataset: pd.DataFrame, protected_attributes: list,
+                                                    output_column_values: list, output_column: str) -> pd.DataFrame:
     """
 
     Args:
@@ -68,8 +68,8 @@ def return_disparate_impact(dataset: pd.DataFrame, protected_attributes: list,
         output_column_values: the list of possible values for the output column
         output_column: the output column
 
-    Returns:
-        this method returns the disparate impact value computed on the dataset for a specific attribute and a specific output column
+    Returns: this method returns the disparate impact value computed on the dataset for a specific attribute and a
+    specific output column
 
     """
     attribute_array = []

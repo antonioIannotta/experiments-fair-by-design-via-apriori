@@ -1,12 +1,22 @@
 import pandas as pd
+from fairness.pre_processing import fix_protected_attributes
 
 
 def proxy_detection(dataset: pd.DataFrame, protected_attributes: list) -> list:
-    pass
+    attributes_list = []
+    for attr in dataset.columns:
+        if attr not in protected_attributes:
+            attributes_list.append(attr)
 
+    proxy_list = []
+    for attribute in attributes_list:
+        for protected_attribute in protected_attributes:
+            if _compute_disparate_impact_for_proxy(attribute, protected_attribute, dataset) == 'PROXY':
+                proxy_list.append(attribute)
+                break
+        continue
 
-def compute_disparate_impact_to_detect_proxy(attribute: pd.Series, protected_attribute: pd.Series) -> float:
-    pass
+    return proxy_list
 
 
 def check_values_type_for_attribute(dataset: pd.DataFrame, variable: str) -> str:
@@ -35,26 +45,58 @@ def _compute_disparate_impact_for_proxy(attribute: str, protected_attribute: str
                                                                             protected_attribute,
                                                                             protected_attribute_value, True)
 
-            if (unprivileged_probability / privileged_probability) <= 0.8 or (unprivileged_probability / privileged_probability) >= 1.25:
+            if (unprivileged_probability / privileged_probability) <= 0.8 or (
+                    unprivileged_probability / privileged_probability) >= 1.25:
                 return 'PROXY'
             else:
                 continue
     else:
-        pass
-         #TODO THIS
+        fixed_dataset = categorical_to_binary(dataset, attribute)
+        most_frequent_value = return_most_frequent_value(dataset, attribute)
+        protected_attribute_values_list = dataset[protected_attribute].values
+        for protected_attribute_value in protected_attribute_values_list:
+            unprivileged_probability = _compute_probability_discrete_scenario(fixed_dataset, attribute,
+                                                                              most_frequent_value,
+                                                                              protected_attribute,
+                                                                              protected_attribute_value, False)
 
-    """
-    unprivileged_probability = _compute_probability(original_dataset, proxy, proxy_value, protected_column,
-                                                    protected_value, False)
-    privileged_probability = _compute_probability(original_dataset, proxy, proxy_value, protected_column,
-                                                  protected_value, True)
+            privileged_probability = _compute_probability_discrete_scenario(fixed_dataset, attribute,
+                                                                            most_frequent_value,
+                                                                            protected_attribute,
+                                                                            protected_attribute_value, True)
 
-    if unprivileged_probability == 0.0:
-        return 0.0
-    else:
-        return unprivileged_probability / privileged_probability
-    """
+            if (unprivileged_probability / privileged_probability) <= 0.8 or (
+                    unprivileged_probability / privileged_probability) >= 1.25:
+                return 'PROXY'
+            else:
+                continue
+
     return 'NOT PROXY'
+
+
+def categorical_to_binary(dataset: pd.DataFrame, attribute: str) -> pd.DataFrame:
+    """
+    This method converts a categorical attribute into a binary one according to the following policy:
+    It is summed the minimum value and the maximum value, divided by 2.
+    1 -> every value greater than this value
+    0 -> every value lesser or equal than this value
+    Args:
+        dataset:
+        attribute:
+
+    Returns: a fixed dataset
+
+    """
+    attribute_value = []
+    threshold_value = (dataset[attribute].min() + dataset[attribute].max()) / 2
+    for index, row in dataset.iterrows():
+        if row[attribute] > threshold_value:
+            attribute_value.append(1)
+        else:
+            attribute_value.append(0)
+
+    dataset[attribute] = pd.Series(attribute_value)
+    return dataset
 
 
 def return_most_frequent_value(dataset: pd.DataFrame, attribute: str) -> int:

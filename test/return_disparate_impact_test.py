@@ -1,6 +1,6 @@
 import unittest
 import pandas as pd
-from fairness.fairness_metric.disparate_impact import DisparateImpact
+from fairness.fairness_metric.fairness_evaluation import DisparateImpact
 
 
 class ReturnDisparateImpactTest(unittest.TestCase):

@@ -5,7 +5,7 @@ import numpy as np
 def fairness_evaluation(dataset: pd.DataFrame, protected_attributes: list, output_column_values: list,
                         output_column: str) -> str:
     """
-
+    This method perform an analysis of the dataset in order to establish if it's either fair or unfair
     Args:
         dataset: the dataset on which perform the computation to establish the fairness/unfairness
         protected_attributes: the list of protected attributes that are fundamental in order to compute the value needed
@@ -15,7 +15,7 @@ def fairness_evaluation(dataset: pd.DataFrame, protected_attributes: list, outpu
         output_column: the output column
 
     Returns:
-    this method returns a string that it's a label for the dataset that can only be 'fair' or 'unfair'.
+    'fair' or 'unfair'
     """
     bias_analysis_dataframe = return_disparate_impact_for_fairness_evaluation(dataset, protected_attributes,
                                                                               output_column_values,

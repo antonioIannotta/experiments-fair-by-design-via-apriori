@@ -1,5 +1,4 @@
 import pandas as pd
-from fairness.pre_processing import fix_protected_attributes
 
 
 def proxy_detection(dataset: pd.DataFrame, protected_attributes: list) -> list:

@@ -1,6 +1,6 @@
 import unittest
 import pandas as pd
-from fairness.fairness_metric.disparate_impact import return_privileged_unprivileged_protected_attribute_value
+from fairness.fairness_metric.fairness_evaluation import return_privileged_unprivileged_protected_attribute_value
 
 
 class PrivUnprivValueTest(unittest.TestCase):

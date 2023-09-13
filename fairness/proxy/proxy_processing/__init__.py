@@ -42,7 +42,7 @@ def proxy_fixing(original_dataset: pd.DataFrame, protected_attributes: list) -> 
     proxy_variables = return_proxy_variables(original_dataset)
     proxy_variables_for_sensitive_attributes = _return_proxy_protected_attribute(proxy_variables,
                                                                                  protected_attributes)
-    
+
     dataset = original_dataset
     for index, row in proxy_variables_for_sensitive_attributes.iterrows():
         for antecedent in row['Antecedent']:
@@ -50,7 +50,8 @@ def proxy_fixing(original_dataset: pd.DataFrame, protected_attributes: list) -> 
 
             disparate_impact_value = _compute_disparate_impact_for_proxy(antecedent, consequent,
                                                                          original_dataset)
-            if not 0.8 < disparate_impact_value < 1.25 and _proxy_format_to_column(antecedent) not in protected_attributes:
+            if not 0.8 < disparate_impact_value < 1.25 and _proxy_format_to_column(
+                    antecedent) not in protected_attributes:
                 dataset = _remove_proxy_from_dataset(original_dataset, antecedent)
 
             else:
@@ -127,12 +128,9 @@ def _proxy_format_to_column(antecedent: str) -> str:
     """This function converts the information related to the proxy into the column name
 
     Args:
-        row (pd.Series): a series that needs to be converted in a list containing only the proxy attributes without the
-        values
-
+        antecedent
     Returns:
-        list: _description_
+
     """
-    
 
     return antecedent.split(" = ")[0]
